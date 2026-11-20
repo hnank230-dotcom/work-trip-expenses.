@@ -1,0 +1,502 @@
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="theme-color" content="#10243f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="مصاريفي">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="description" content="إدارة مصاريف رحلات العمل والفواتير والتقارير">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<title>مصاريف رحلات العمل</title>
+</head><body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap">
+<style>
+/* Layout concept: single phone-width column; blue gradient header bands with a white card floating over them, soft cards below, dark photo viewer. */
+:root{
+  --bg:#F3F6FC; --card:#FFFFFF; --fg:#0E2347; --muted:#62728C; --line:#E7EDF8;
+  --tint:#EAF1FF; --tint-fg:#1646C0; --accent:#1F5FE8; --field:#F7F9FD; --fieldline:#E3EAF6;
+  --g1:#2F6FF5; --g2:#1646C0; --shadow:0 6px 18px rgba(20,69,184,.07); --shadow-lg:0 12px 30px rgba(20,69,184,.16);
+  --danger:#C62F3E; --danger-bg:#FDECEE; --ok:#12683C; --ok-bg:#E6F6EE; --neutral-chip:#EEF1F6; --neutral-fg:#33466A;
+  --dark:#0A1730; --dark2:#13264A; --chev:#9AA9C2;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0B1630; --card:#12224A; --fg:#EAF0FF; --muted:#9FB0D3; --line:#213566;
+  --tint:#1A2E63; --tint-fg:#A9C3FF; --accent:#5B8DFF; --field:#0F1D3F; --fieldline:#243A70;
+  --g1:#3B6DF0; --g2:#2146A8; --shadow:0 6px 18px rgba(0,0,0,.35); --shadow-lg:0 12px 30px rgba(0,0,0,.5);
+  --danger:#FF7A87; --danger-bg:#3A1A24; --ok:#7BE0A8; --ok-bg:#12332A; --neutral-chip:#1B2B55; --neutral-fg:#C5D3F2;
+  --dark:#050C1C; --dark2:#0D1D3C; --chev:#6F82AA; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0B1630; --card:#12224A; --fg:#EAF0FF; --muted:#9FB0D3; --line:#213566;
+  --tint:#1A2E63; --tint-fg:#A9C3FF; --accent:#5B8DFF; --field:#0F1D3F; --fieldline:#243A70;
+  --g1:#3B6DF0; --g2:#2146A8; --shadow:0 6px 18px rgba(0,0,0,.35); --shadow-lg:0 12px 30px rgba(0,0,0,.5);
+  --danger:#FF7A87; --danger-bg:#3A1A24; --ok:#7BE0A8; --ok-bg:#12332A; --neutral-chip:#1B2B55; --neutral-fg:#C5D3F2;
+  --dark:#050C1C; --dark2:#0D1D3C; --chev:#6F82AA; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:'Tajawal',system-ui,-apple-system,'Segoe UI',sans-serif;direction:rtl;font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input,textarea{font-family:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0;text-align:inherit}
+h1,h2,p{margin:0}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.app{max-width:520px;margin:0 auto;min-height:100vh;position:relative;padding-bottom:40px}
+.pad{padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.hdr{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--g1) 0%,var(--g2) 100%);border-radius:0 0 32px 32px;color:#fff;padding-top:18px;padding-bottom:28px}
+.hdr.tall{padding-bottom:84px}
+.hdr::before{content:"";position:absolute;top:-70px;left:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.07)}
+.hdr::after{content:"";position:absolute;top:50px;right:-80px;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hdr .pad{position:relative;z-index:1}
+.hrow{display:flex;align-items:center;gap:12px}
+.hrow .grow{flex:1;min-width:0}
+.ttl h1{font-size:26px;font-weight:800;line-height:1.2}
+.ttl span{display:block;font-size:13px;font-weight:500;opacity:.88}
+.iconbtn{display:flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:22px;background:rgba(255,255,255,.18);color:#fff;flex-shrink:0}
+.btn-white{display:flex;align-items:center;gap:8px;height:46px;padding:0 18px 0 16px;border-radius:23px;background:#fff;color:#1646C0;font-size:15px;font-weight:800;box-shadow:0 6px 16px rgba(8,30,90,.25)}
+.float{margin-top:-52px;position:relative;z-index:2}
+.stat{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:18px 20px;background:var(--card);border-radius:22px;box-shadow:var(--shadow-lg)}
+.stat .lbl{font-size:13px;color:var(--muted);font-weight:500}
+.stat .num{font-size:30px;font-weight:800;color:var(--accent);line-height:1.2}
+.stat .cur{font-size:15px;font-weight:700;color:var(--muted)}
+.chip{display:flex;flex-direction:column;align-items:center;padding:8px 16px;border-radius:14px;background:var(--tint);color:var(--tint-fg)}
+.chip b{font-size:22px;font-weight:800;line-height:1.2}.chip span{font-size:12px;font-weight:700}
+.sec{padding-top:22px;display:flex;flex-direction:column;gap:14px}
+.sec h2{font-size:18px;font-weight:800}
+.card{background:var(--card);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);padding:18px}
+.tripcard{display:flex;align-items:center;gap:14px;width:100%;padding:16px;background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}
+.ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:16px;background:var(--tint);color:var(--accent);flex-shrink:0}
+.ico.sm{width:48px;height:48px;border-radius:15px}
+.ico.neutral{background:var(--neutral-chip);color:var(--neutral-fg)}
+.grow{flex:1;min-width:0}
+.name{font-size:18px;font-weight:800;overflow-wrap:anywhere}
+.sub{font-size:13.5px;color:var(--muted);font-weight:500}
+.money{display:flex;flex-direction:column;align-items:flex-start;line-height:1.15}
+.money b{font-size:22px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums}
+.money span{font-size:12px;font-weight:700;color:var(--muted)}
+.chev{color:var(--chev);flex-shrink:0}
+.badge{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:10px;background:var(--tint);color:var(--tint-fg);margin-inline-start:8px;vertical-align:middle}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;padding:30px 20px}
+.empty p{color:var(--muted);font-size:14.5px}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 16px;border-radius:14px;font-size:14.5px;font-weight:800;width:100%}
+.btn.pri{background:var(--accent);color:#fff}
+.btn.soft{background:var(--tint);color:var(--tint-fg)}
+.btn.grad{background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;min-height:58px;border-radius:18px;font-size:18px;box-shadow:0 10px 22px rgba(31,95,232,.35)}
+.btn.danger{background:var(--danger-bg);color:var(--danger)}
+.btn.off{opacity:.55}
+.addbtn{display:flex;align-items:center;gap:6px;height:44px;padding:0 16px 0 14px;border-radius:22px;background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;font-size:14.5px;font-weight:800;box-shadow:0 8px 18px rgba(31,95,232,.3);flex-shrink:0}
+.sechead{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.exp-top{display:flex;align-items:center;gap:12px;width:100%}
+.tag{font-size:13.5px;font-weight:700;color:var(--accent)}
+.tag.n{color:var(--muted)}
+.sep{height:1px;background:var(--line);margin:14px 0}
+.btns{display:flex;gap:10px}
+.btns>*{flex:1}
+.ch{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.ch .ico{width:42px;height:42px;border-radius:13px}
+.ch h2{font-size:18px}
+.tiles{display:flex;gap:10px}
+.tile{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;padding:12px 14px;border-radius:16px;background:var(--bg)}
+.tile>span{font-size:12.5px;font-weight:700;color:var(--muted)}
+.tile input{width:100%;min-width:0;border:0;background:transparent;font-size:20px;font-weight:800;padding:0;direction:rtl;color:var(--fg)}
+.tile.hot{background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff}
+.tile.hot>span{color:rgba(255,255,255,.9)}
+.tile.hot b{font-size:21px;font-weight:800}
+.result{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;padding:14px 16px;border-radius:16px;background:var(--tint);color:var(--tint-fg);font-weight:700;font-size:14px}
+.result b{font-size:19px;font-weight:800}
+.note{font-size:13px;color:var(--muted);margin-top:12px}
+.bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(520px,100%);display:flex;gap:10px;padding:14px max(20px,env(safe-area-inset-right,0px)) calc(18px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));background:var(--card);border-radius:28px 28px 0 0;box-shadow:0 -8px 24px rgba(20,69,184,.12);z-index:20}
+.bar .btn{min-height:56px;border-radius:16px;font-size:15px}
+.form{background:var(--card);border-radius:24px;box-shadow:var(--shadow-lg);padding:20px 18px;display:flex;flex-direction:column;gap:16px}
+.fld{display:flex;flex-direction:column;gap:8px}
+.fld label,.fld .l{font-size:14px;font-weight:700;color:var(--neutral-fg)}
+.in{width:100%;height:54px;padding:0 16px;border:2px solid var(--fieldline);border-radius:16px;background:var(--field);font-size:16px;font-weight:700;direction:rtl;color:var(--fg)}
+.in:focus{border-color:var(--accent);outline:none}
+.in.big{height:64px;font-size:30px;font-weight:800;color:var(--accent);border-color:var(--accent);background:var(--card);border-radius:18px;padding-inline-start:70px}
+.amtwrap{position:relative}.amtwrap span{position:absolute;left:18px;top:50%;transform:translateY(-50%);font-weight:800;color:var(--muted)}
+.row2{display:flex;gap:10px}.row2>*{flex:1;min-width:0}
+.dayview{height:54px;display:flex;align-items:center;padding:0 14px;border-radius:16px;background:var(--tint);color:var(--tint-fg);font-weight:800}
+.seg{display:flex;gap:8px;padding:5px;border-radius:18px;background:var(--bg)}
+.seg button{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;height:46px;border-radius:14px;color:var(--muted);font-size:15px;font-weight:700}
+.seg button[aria-pressed="true"]{background:var(--accent);color:#fff;font-weight:800;box-shadow:0 6px 14px rgba(31,95,232,.3)}
+.hint{font-size:12.5px;color:var(--muted)}
+.infobox{display:flex;align-items:center;gap:10px;padding:14px;border-radius:16px;background:var(--tint);color:var(--tint-fg);font-size:13.5px;line-height:1.7;font-weight:500}
+.dark{background:var(--dark);color:#fff;min-height:100vh;display:flex;flex-direction:column}
+.dark .top{display:flex;align-items:center;gap:12px;padding-top:18px;padding-bottom:8px}
+.dark .iconbtn{background:rgba(255,255,255,.14)}
+.mode{display:flex;gap:6px;padding:5px;border-radius:18px;background:rgba(255,255,255,.1);margin-top:10px}
+.mode button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;height:50px;border-radius:14px;color:#fff;font-size:15px;font-weight:800;background:rgba(255,255,255,.14)}
+.mode button.first{background:#fff;color:#1646C0}
+.finder{flex:1;min-height:340px;position:relative;margin-top:16px;border-radius:24px;background:linear-gradient(180deg,var(--dark2),var(--dark));display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.finder img{max-width:100%;max-height:60vh;object-fit:contain;display:block}
+.finder .ph{display:flex;flex-direction:column;align-items:center;gap:10px;color:#C9D6EE;text-align:center;padding:24px;font-size:14.5px}
+.corner{position:absolute;width:34px;height:34px;border:4px solid #fff}
+.c1{top:16px;right:16px;border-left:0;border-bottom:0;border-radius:10px 0 0 0}
+.c2{top:16px;left:16px;border-right:0;border-bottom:0;border-radius:0 10px 0 0}
+.c3{bottom:16px;right:16px;border-left:0;border-top:0;border-radius:0 0 0 10px}
+.c4{bottom:16px;left:16px;border-right:0;border-top:0;border-radius:0 0 10px 0}
+.dbtns{display:flex;gap:10px;padding-top:14px;padding-bottom:28px}
+.dbtns .btn{min-height:58px;border-radius:18px;font-size:16px}
+.dbtns .a{background:rgba(255,255,255,.12);color:#fff}
+.dbtns .b{background:linear-gradient(160deg,#3B7BFF,#1F5FE8);color:#fff;box-shadow:0 10px 22px rgba(31,95,232,.45)}
+.pill{display:flex;align-items:center;height:38px;padding:0 16px;border-radius:19px;background:rgba(255,255,255,.14);font-size:15px;font-weight:800}
+.slides{flex:1;display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;direction:rtl}
+.slides::-webkit-scrollbar{display:none}
+.slide{flex:0 0 100%;scroll-snap-align:center;display:flex;align-items:center;justify-content:center;padding:8px 16px}
+.slide img{max-width:100%;max-height:68vh;object-fit:contain;border-radius:10px;background:#fff;box-shadow:0 18px 44px rgba(0,0,0,.5)}
+.dots{display:flex;justify-content:center;gap:8px;padding:10px 0 14px}
+.dots i{width:8px;height:8px;border-radius:4px;background:rgba(255,255,255,.35);transition:all .2s}
+.dots i.on{width:24px;background:#fff}
+.infobar{display:flex;align-items:center;gap:12px;margin:0 max(20px,env(safe-area-inset-right,0px)) 24px max(20px,env(safe-area-inset-left,0px));padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.1)}
+.opt{display:flex;align-items:center;gap:14px;width:100%;padding:16px;border-radius:20px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.opt.main{background:linear-gradient(160deg,var(--g1),var(--g2));color:#fff;border:0;box-shadow:0 10px 22px rgba(31,95,232,.3)}
+.opt.main .ico{background:rgba(255,255,255,.2);color:#fff}
+.opt b{font-size:18px;font-weight:800;display:block}
+.opt small{font-size:13px;color:var(--muted);font-weight:500}
+.opt.main small{color:rgba(255,255,255,.9)}
+.okbox{display:flex;align-items:center;gap:10px;padding:14px 16px;border-radius:16px;background:var(--ok-bg);color:var(--ok);font-size:14.5px;font-weight:800}
+#toast{position:fixed;left:50%;bottom:calc(96px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);max-width:min(440px,calc(100% - 32px));background:#0E2347;color:#fff;padding:12px 18px;border-radius:16px;font-size:14.5px;font-weight:700;z-index:60;box-shadow:0 10px 24px rgba(0,0,0,.35);text-align:center}
+#modal{position:fixed;inset:0;z-index:50;background:rgba(5,12,28,.55);display:flex;align-items:flex-end;justify-content:center}
+.sheet{width:min(520px,100%);background:var(--card);border-radius:28px 28px 0 0;padding:22px max(20px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:14px;max-height:90vh;overflow:auto}
+.sheet h2{font-size:19px;font-weight:800}
+.sheet textarea{width:100%;min-height:200px;border:2px solid var(--fieldline);border-radius:16px;background:var(--field);padding:12px 14px;font-size:14.5px;line-height:1.7;direction:rtl;resize:vertical}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+/* Professional finish */
+.installhint{display:flex;align-items:center;gap:12px;padding:13px 15px;border:1px solid #DCEAE7;background:#EDF6F4;border-radius:16px;color:#174F49}
+.installmark{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:#D9ECE7;color:#147D70;font-size:21px;flex:none}
+.installhint b{display:block;font-size:14px;font-weight:800}.installhint small{display:block;font-size:12px;color:#58756F;margin-top:2px}
+
+:root{--bg:#F4F6F8;--card:#FFFFFF;--fg:#172B43;--muted:#718096;--line:#E5EAF0;--tint:#E8F3F1;--tint-fg:#146B5C;--accent:#147D70;--field:#F8FAFB;--fieldline:#DCE5E9;--g1:#183B50;--g2:#10243F;--shadow:0 5px 18px rgba(19,44,64,.055);--shadow-lg:0 12px 28px rgba(19,44,64,.12);--danger:#B93846;--danger-bg:#FCEDEF;--ok:#16704D;--ok-bg:#E8F5EE;--neutral-chip:#EEF1F4;--neutral-fg:#42566A;--dark:#091727;--dark2:#10243F;--chev:#9AA8B5}
+body{background:var(--bg);letter-spacing:.05px}
+.app{max-width:560px;padding-bottom:calc(42px + env(safe-area-inset-bottom,0px))}
+.hdr{background:linear-gradient(145deg,#204D61 0%,#10243F 75%);border-radius:0 0 30px 30px}
+.hdr::before{width:260px;height:260px;background:rgba(93,177,160,.12)}
+.hdr::after{background:rgba(255,255,255,.045)}
+.ttl h1{letter-spacing:-.35px}
+.stat,.card,.tripcard,.form{border-color:var(--line);box-shadow:var(--shadow)}
+.stat{border-radius:22px}
+.card,.tripcard,.form{border-radius:20px}
+.ico{background:#E8F3F1;color:#147D70}
+.btn.grad,.addbtn{background:linear-gradient(135deg,#198A79,#11685F);box-shadow:0 7px 18px rgba(20,125,112,.2)}
+.btn.pri{background:#147D70}
+.btn.soft{background:#E8F3F1;color:#146B5C}
+.btn-white{color:#146B5C}
+.money b,.stat .num{color:#147D70}
+.bar{box-shadow:0 -7px 22px rgba(19,44,64,.09);padding-bottom:calc(18px + env(safe-area-inset-bottom,0px))}
+.in:focus{border-color:#147D70}
+.tile.hot{background:linear-gradient(135deg,#198A79,#11685F)}
+.result{background:#E8F3F1;color:#146B5C}
+.badge{background:#E8F3F1;color:#146B5C}
+.opt.main{background:linear-gradient(135deg,#204D61,#10243F)}
+.btn:active,.tripcard:active,.opt:active{transform:scale(.99)}
+@media(min-width:600px){body{padding:24px 0}.app{min-height:calc(100vh - 48px);border-radius:28px;overflow:hidden;box-shadow:0 18px 55px rgba(15,38,57,.12);background:var(--bg)}}
+
+
+/* Premium financial dashboard */
+:root{--bg:#f2f5f7;--card:#fff;--fg:#142839;--muted:#586c7c;--line:#dfe8ec;--tint:#e4f3ef;--tint-fg:#126456;--accent:#087968;--field:#f5f8f9;--fieldline:#d5e1e5;--g1:#087968;--g2:#07594e;--shadow:0 4px 16px #14283908;--shadow-lg:0 12px 28px #14283915;--neutral-chip:#edf2f5;--neutral-fg:#344e60;--chev:#8194a0}
+body{letter-spacing:0}.hdr{background:linear-gradient(135deg,#10243f,#173e4a);border-radius:0 0 26px 26px;padding-top:28px;padding-bottom:30px}.hdr.tall{padding-bottom:90px}.hdr::before{background:none;border:1px solid #ffffff19;width:300px;height:300px}.hdr::after{background:none;border:1px solid #ffffff15;width:240px;height:240px}.ttl h1{font-size:25px;letter-spacing:0}.ttl span{font-size:13px;margin-top:5px}.homehead .ttl{order:-1;text-align:right!important;flex:1}.homehead .btn-white{height:44px;padding:0 13px;border-radius:12px;box-shadow:none;font-size:14px}.stat{border:1px solid var(--line);padding:23px 19px;border-radius:19px;box-shadow:var(--shadow-lg)}.stat .num{font-size:36px;color:var(--accent);font-variant-numeric:tabular-nums}.stat .lbl{font-size:14px;margin-bottom:8px}.chip{border-radius:12px;padding:11px 15px;background:var(--tint);color:var(--tint-fg)}.sec{padding-top:24px;gap:12px}.card,.tripcard,.form{border-radius:17px;border:1px solid var(--line)}.tripcard{padding:17px 14px;gap:12px}.ico{background:var(--tint);color:var(--accent);border-radius:13px}.ico.neutral{background:var(--neutral-chip);color:var(--neutral-fg)}.btn,.addbtn,.btn.grad,.bar .btn{border-radius:12px}.btn.pri,.btn.grad,.addbtn,.tile.hot{background:var(--accent);box-shadow:none}.btn.soft,.badge,.result{background:var(--tint);color:var(--tint-fg)}.money b{color:var(--accent)}.in{border-width:1px;border-radius:12px}.in.big{padding-inline-start:16px;padding-inline-end:70px}.in:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--tint)}.form{gap:19px}.seg{border-radius:12px}.seg button{border-radius:9px}.seg button[aria-pressed=true]{box-shadow:none}.bar{width:min(560px,100%);border-radius:20px 20px 0 0;border-top:1px solid var(--line);gap:7px;padding-inline:14px}.bar .btn{padding-inline:7px;gap:5px;font-size:14px}.bar .btn svg{flex-shrink:0}.installhint{background:var(--card);border-color:var(--line);color:var(--fg);border-radius:14px}.installmark{background:var(--tint);color:var(--accent)}.installhint small{color:var(--muted)}.opt.main{background:linear-gradient(135deg,#10243f,#173e4a)}.empty{padding:32px 18px}.empty .ico{width:64px;height:64px}.section-count{font-size:12px;color:var(--muted);font-weight:700}.home-kicker{display:block;font-size:12px!important;letter-spacing:1px;opacity:.75;margin-bottom:7px}.tile{border:1px solid var(--line);border-radius:12px}.tile.hot{border-color:transparent}.iconbtn{border-radius:13px}.sheet{border-radius:22px 22px 0 0}.btn:active,.tripcard:active{transform:scale(.985)}
+@media(max-width:360px){.pad{padding-inline:14px}.bar .btn{font-size:12px}.bar .btn svg{width:16px}.homehead .ttl h1{font-size:22px}}
+@media(prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#101d28;--card:#172936;--fg:#edf5f7;--muted:#acbec9;--line:#304653;--tint:#203e3e;--tint-fg:#a0e7d4;--accent:#4ac6ad;--field:#13232e;--fieldline:#405663;--neutral-chip:#263b49;--neutral-fg:#d3e2e8;--shadow:none;--shadow-lg:none}.btn.pri,.btn.grad,.addbtn,.tile.hot,.seg button[aria-pressed=true]{background:#087968;color:#fff}.installhint small{color:var(--muted)}}
+</style>
+
+<div class="app" id="view"></div>
+<div id="toast" hidden role="status"></div>
+<div id="modal" hidden></div>
+<input type="file" id="fCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="fGal" accept="image/*" hidden>
+
+<script>
+(function(){
+'use strict';
+/* ---------- helpers ---------- */
+const AR='٠١٢٣٤٥٦٧٨٩';
+const ar=s=>String(s).replace(/\d/g,d=>AR[d]);
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+const DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const pISO=iso=>{const [y,m,d]=String(iso).split('-').map(Number);return {y,m,d}};
+const fmtDate=iso=>{if(!iso)return '—';const {y,m,d}=pISO(iso);return ar(d)+' '+MONTHS[m-1]+' '+ar(y)};
+const dayName=iso=>{if(!iso)return '';const {y,m,d}=pISO(iso);return DAYS[new Date(y,m-1,d).getDay()]};
+const fmtRange=(a,b)=>{if(!a||!b)return fmtDate(a||b);const A=pISO(a),B=pISO(b);if(A.y===B.y&&A.m===B.m)return ar(A.d)+' إلى '+ar(B.d)+' '+MONTHS[B.m-1]+' '+ar(B.y);return fmtDate(a)+' إلى '+fmtDate(b)};
+const fmtMoney=n=>ar(new Intl.NumberFormat('en-US',{maximumFractionDigits:2}).format(n||0)).replace(/,/g,'٬').replace(/\./g,'٫');
+const toNum=s=>{const t=String(s).replace(/[٠-٩]/g,d=>AR.indexOf(d)).replace(/٫/g,'.').replace(/[٬,\s]/g,'');const n=parseFloat(t);return isFinite(n)?n:0};
+const todayISO=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
+const toMin=t=>{if(!t)return null;const [h,m]=t.split(':').map(Number);return h*60+m};
+const fmtTime=t=>{if(t==null||t==='')return '—';const mins=typeof t==='number'?((t%1440)+1440)%1440:toMin(t);const h=Math.floor(mins/60),m=mins%60;const h12=h%12===0?12:h%12;return ar(h12)+':'+ar(String(m).padStart(2,'0'))+' '+(h<12?'ص':'م')};
+const fmtDur=min=>{const h=Math.floor(min/60),m=min%60;const parts=[];
+  if(h>0)parts.push(h===1?'ساعة':h===2?'ساعتان':(h<=10?ar(h)+' ساعات':ar(h)+' ساعة'));
+  if(m===30&&h>0)return parts[0]+' ونص';
+  if(m>0)parts.push(ar(m)+' دقيقة');
+  return parts.join(' و')||'٠ ساعة'};
+const otMinutes=t=>{const a=toMin(t.ot&&t.ot.s),b=toMin(t.ot&&t.ot.e);if(a==null||b==null)return null;let d=b-a;if(d<0)d+=1440;return d};
+const carEnd=t=>{const a=toMin(t.car);return a==null?null:a+480};
+const tripTotal=t=>t.expenses.reduce((s,e)=>s+(+e.amount||0),0);
+const CATS={stay:{l:'سكن',i:'bed'},food:{l:'تغذية',i:'food'},other:{l:'أخرى',i:'wrench'}};
+const I={
+back:'<path d="M5 12h14M13 6l6 6-6 6"/>',plus:'<path d="M12 5v14M5 12h14"/>',
+cal:'<rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/>',
+brief:'<rect x="3" y="7" width="18" height="13" rx="3"/><path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M3 13h18"/>',
+bed:'<path d="M3 18V7M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="1.5"/>',
+food:'<path d="M7 3v8M5 3v5a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-3 4-3 7h3v11"/>',
+wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.4 2.4-2.6-.6-.6-2.6z"/>',
+cam:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+gal:'<rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/>',
+clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',ret:'<path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/>',
+car:'<path d="M5 16v-5l2-5h10l2 5v5M3 16h18M7 19v-3M17 19v-3"/>',
+save:'<path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7V4M8 20v-6h8v6"/>',down:'<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>',
+send:'<path d="M21 3l-8 18-3-8-7-3z"/>',chev:'<path d="M15 6l-6 6 6 6"/>',check:'<path d="M5 12l5 5 9-10"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/>',
+close:'<path d="M6 6l12 12M18 6L6 18"/>',retry:'<path d="M4 12a8 8 0 1 0 3-6.2M4 4v4h4"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.01"/>',ok:'<circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/>',
+copy:'<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/>',
+sl:'<path d="M9 6l6 6-6 6"/>'
+};
+const ic=(n,s=20,w=2)=>'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+w+'" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+I[n]+'</svg>';
+
+/* ---------- storage (IndexedDB, with in-memory fallback) ---------- */
+const DB={db:null,mem:{trips:{},photos:{}},
+  async open(){try{this.db=await new Promise((res,rej)=>{const r=indexedDB.open('masarif-rihlat',1);r.onupgradeneeded=()=>{const d=r.result;d.createObjectStore('trips',{keyPath:'id'});d.createObjectStore('photos',{keyPath:'id'})};r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})}catch(e){this.db=null}},
+  run(store,mode,fn){return new Promise((res,rej)=>{try{const t=this.db.transaction(store,mode);const r=fn(t.objectStore(store));t.oncomplete=()=>res(r&&r.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)}catch(e){rej(e)}})},
+  async all(s){if(!this.db)return Object.values(this.mem[s]);try{return await this.run(s,'readonly',o=>o.getAll())||[]}catch(e){return Object.values(this.mem[s])}},
+  async get(s,id){if(!this.db)return this.mem[s][id];try{return await this.run(s,'readonly',o=>o.get(id))}catch(e){return this.mem[s][id]}},
+  async put(s,v){this.mem[s][v.id]=v;if(this.db){try{await this.run(s,'readwrite',o=>o.put(v))}catch(e){}}},
+  async del(s,id){delete this.mem[s][id];if(this.db){try{await this.run(s,'readwrite',o=>o.delete(id))}catch(e){}}}
+};
+
+/* ---------- state ---------- */
+let TRIPS=[];let S={screen:'main'};let stack=[];let draft=null;let pending=null;let viewerImgs=[];
+
+const sortTrips=()=>TRIPS.sort((a,b)=>String(b.start).localeCompare(String(a.start)));
+const cur=()=>TRIPS.find(t=>t.id===S.tid);
+const saveTrip=t=>DB.put('trips',t);
+/* ---------- UI utilities ---------- */
+let tt=null;
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.hidden=false;clearTimeout(tt);tt=setTimeout(()=>{e.hidden=true},2600)}
+function modal(html){const m=document.getElementById('modal');m.innerHTML=html;m.hidden=false}
+function closeModal(){const m=document.getElementById('modal');m.hidden=true;m.innerHTML=''}
+function confirmBox(msg,label,fn){modal('<div class="sheet" role="dialog" aria-modal="true"><h2>'+esc(msg)+'</h2><div class="btns"><button class="btn danger" data-act="mOk">'+esc(label)+'</button><button class="btn soft" data-act="mNo">إلغاء</button></div></div>');confirmBox.fn=fn}
+function go(screen,params,push){if(push!==false)stack.push(S);S=Object.assign({screen:screen},params||{});render();window.scrollTo(0,0)}
+function back(){S=stack.pop()||{screen:'main'};render();}
+
+/* ---------- views ---------- */
+function hdr(title,sub,opts){opts=opts||{};
+ return '<div class="hdr'+(opts.tall?' tall':'')+'"><div class="pad"><div class="hrow"><button class="iconbtn" data-act="back" aria-label="رجوع">'+ic('back',22,2.4)+'</button><div class="grow ttl"><h1>'+esc(title)+'</h1>'+(sub?'<span>'+esc(sub)+'</span>':'')+'</div>'+(opts.right||'')+'</div>'+(opts.extra||'')+'</div></div>'}
+
+function vMain(){
+ const total=TRIPS.reduce((s,t)=>s+tripTotal(t),0);
+ const list=TRIPS.length?TRIPS.map(t=>'<button class="tripcard" data-act="openTrip" data-id="'+t.id+'"><span class="ico">'+ic('brief',26)+'</span><span class="grow"><span class="name">'+esc(t.name)+(t.sample?'<span class="badge">مثال</span>':'')+'</span><span class="sub" style="display:block;margin-top:4px">'+fmtRange(t.start,t.end)+'</span></span><span class="money"><b>'+fmtMoney(tripTotal(t))+'</b><span>ريال</span></span><span class="chev">'+ic('chev',20,2.4)+'</span></button>').join('')
+  :'<div class="card empty"><span class="ico">'+ic('brief',26)+'</span><h2>ما عندك رحلات بعد</h2><p>اضغط "إضافة رحلة" وابدأ تسجل مصاريفك وصور فواتيرك.</p></div>';
+ return '<div class="hdr tall"><div class="pad"><div class="hrow homehead" style="justify-content:space-between"><button class="btn-white" data-act="newTrip">'+ic('plus',18,2.6)+'<span>إضافة رحلة</span></button><div class="ttl" style="text-align:left"><span class="home-kicker">إدارة المصاريف</span><h1>رحلاتي</h1><span>مصاريف رحلات العمل</span></div></div></div></div>'
+ +'<div class="pad float"><div class="stat"><div><div class="lbl">إجمالي كل الرحلات</div><div><span class="num">'+fmtMoney(total)+'</span> <span class="cur">ريال</span></div></div><div class="chip"><b>'+ar(TRIPS.length)+'</b><span>رحلات</span></div></div></div>'
+ +'<div class="pad" style="margin-top:14px"><div class="installhint"><span class="installmark">✦</span><span><b>تطبيقك الخاص</b><small>أضِفه إلى الشاشة الرئيسية من Safari للوصول السريع.</small></span></div></div>'
+ +'<div class="pad sec"><div class="sechead"><h2>كل الرحلات</h2><span class="section-count">'+ar(TRIPS.length)+' رحلة</span></div>'+list+'</div>'}
+
+function vNewTrip(){const t=S.tid?cur():null;const d=draft;
+ return hdr(t?'تعديل الرحلة':'رحلة جديدة',t?'':'سجّل بيانات الرحلة وابدأ بإضافة المصاريف',{tall:true})
+ +'<div class="pad float"><form class="form" id="tripForm" novalidate><div class="fld"><label for="tName">اسم الرحلة</label><input class="in" id="tName" data-d="name" value="'+esc(d.name)+'" placeholder="مثال: رحلة الدمام" autocomplete="off" style="border-color:var(--accent)"></div>'
+ +'<div class="row2"><div class="fld"><label for="tStart">تاريخ البداية</label><input class="in" type="date" id="tStart" data-d="start" value="'+esc(d.start)+'"></div><div class="fld"><label for="tEnd">تاريخ النهاية</label><input class="in" type="date" id="tEnd" data-d="end" value="'+esc(d.end)+'"></div></div>'
+ +'<div class="infobox">'+ic('info',22)+'<span>بعد البدء تقدر تضيف المصاريف وصور الفواتير والعمل الإضافي ووقت تشغيل السيارة.</span></div></form></div>'
+ +'<div class="pad" style="padding-top:22px"><button class="btn grad" data-act="saveTrip">'+(t?'حفظ التعديل':'بدء الرحلة')+ic('chev',20,2.6)+'</button></div>'}
+
+function vTrip(){const t=cur();if(!t)return '';
+ const exps=t.expenses.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ const cards=exps.length?exps.map(e=>{const c=CATS[e.cat]||CATS.other;const title=e.desc||e.other||c.l;const tag=e.cat==='other'&&e.other&&e.desc?'أخرى · '+e.other:c.l;
+  const n=e.photos.length;
+  return '<div class="card"><button class="exp-top" data-act="editExp" data-id="'+e.id+'" aria-label="تعديل المصروف"><span class="ico sm'+(e.cat==='other'?' neutral':'')+'">'+ic(c.i,24)+'</span><span class="grow"><span class="name" style="font-size:17px;display:block">'+esc(title)+'</span><span class="tag'+(e.cat==='other'?' n':'')+'">'+esc(tag)+'</span></span><span class="money"><b style="font-size:24px">'+fmtMoney(e.amount)+'</b><span>ريال</span></span></button><div class="sep"></div>'
+  +'<div class="btns"><button class="btn pri" data-act="addPhoto" data-id="'+e.id+'">'+ic('cam',19)+'<span>إضافة صورة</span></button><button class="btn soft'+(n?'':' off')+'" data-act="viewPhotos" data-id="'+e.id+'">'+ic('gal',19)+'<span>استعراض الصور ('+ar(n)+')</span></button></div></div>'}).join('')
+  :'<div class="card empty"><span class="ico">'+ic('plus',26)+'</span><p>ما فيه مصاريف بعد. اضغط "إضافة مصروف" وسجّل أول مصروف.</p></div>';
+ const om=otMinutes(t),ce=carEnd(t);
+ return '<div class="hdr"><div class="pad"><div class="hrow"><button class="iconbtn" data-act="back" aria-label="رجوع">'+ic('back',22,2.4)+'</button><div class="grow ttl"><h1>'+esc(t.name)+(t.sample?'<span class="badge">مثال</span>':'')+'</h1></div><button class="iconbtn" data-act="editTrip" aria-label="تعديل الرحلة">'+ic('edit',20)+'</button><button class="iconbtn" data-act="delTrip" aria-label="حذف الرحلة">'+ic('trash',20)+'</button></div>'
+ +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><div class="pill" style="gap:8px;font-size:14px">'+ic('cal',17)+'<span>من '+fmtRange(t.start,t.end)+'</span></div><div class="pill" style="background:#fff;color:#1646C0;gap:8px;font-size:14px">الإجمالي <span style="font-size:16px">'+fmtMoney(tripTotal(t))+' ريال</span></div></div></div></div>'
+ +'<div class="pad" style="padding-bottom:130px"><div class="sec"><div class="sechead"><h2 style="font-size:19px">الفواتير والمصاريف</h2><button class="addbtn" data-act="newExp">'+ic('plus',18,2.6)+'<span>إضافة مصروف</span></button></div>'+cards
+ +'<div class="card"><div class="ch"><span class="ico">'+ic('clock',22,2.2)+'</span><h2>العمل الإضافي</h2></div><div class="tiles"><label class="tile"><span>وقت البداية</span><input type="time" data-bind="ot.s" value="'+esc(t.ot.s)+'"></label><label class="tile"><span>وقت النهاية</span><input type="time" data-bind="ot.e" value="'+esc(t.ot.e)+'"></label></div><div class="result"><span>ساعات الأوفر تايم <span class="badge" style="background:var(--card)">تلقائي</span></span><b>'+(om==null?'—':fmtDur(om))+'</b></div></div>'
+ +'<div class="card"><div class="ch"><span class="ico">'+ic('ret',22,2.2)+'</span><h2>العودة</h2></div><label class="tile"><span>تاريخ العودة'+(t.ret?' · '+dayName(t.ret):'')+'</span><input type="date" data-bind="ret" value="'+esc(t.ret)+'"></label>'+(t.ret?'<div class="note" style="margin-top:8px">'+fmtDate(t.ret)+'</div>':'')+'</div>'
+ +'<div class="card"><div class="ch"><span class="ico">'+ic('car',22,2.2)+'</span><h2>وقت تشغيل السيارة</h2></div><div class="tiles"><label class="tile"><span>وقت التشغيل</span><input type="time" data-bind="car" value="'+esc(t.car)+'"></label><div class="tile hot"><span>وقت نهاية الدوام</span><b>'+(ce==null?'—':fmtTime(ce))+'</b></div></div><div class="note">يُحسب تلقائياً بعد ٨ ساعات بالضبط من وقت التشغيل.</div></div>'
+ +'</div></div>'
+ +'<div class="bar"><button class="btn grad" style="flex:1.2;min-height:56px;font-size:16px;border-radius:16px" data-act="toActions">'+ic('save',20,2.2)+'<span>حفظ</span></button><button class="btn soft" style="flex:1.3" data-act="toActions">'+ic('down',20,2.2)+'<span>تحميل PDF</span></button><button class="btn soft" data-act="toActions">'+ic('send',20,2.2)+'<span>إرسال</span></button></div>'}
+
+function vExp(){const d=draft;const sel=k=>'aria-pressed="'+(d.cat===k)+'"';
+ return hdr(d.id?'تعديل مصروف':'إضافة مصروف',cur()?cur().name:'',{tall:false})
+ +'<div class="pad" style="margin-top:16px"><form class="form" id="expForm" novalidate><div class="fld"><label for="eAmt">المبلغ</label><div class="amtwrap"><input class="in big" id="eAmt" data-d="amount" inputmode="decimal" value="'+esc(d.amount)+'" placeholder="٠" autocomplete="off"><span>ريال</span></div></div>'
+ +'<div class="fld"><span class="l">التصنيف</span><div class="seg" role="group" aria-label="التصنيف"><button type="button" data-act="cat" data-id="stay" '+sel('stay')+'>'+ic('bed',18)+'سكن</button><button type="button" data-act="cat" data-id="food" '+sel('food')+'>'+ic('food',18)+'تغذية</button><button type="button" data-act="cat" data-id="other" '+sel('other')+'>'+ic('wrench',18)+'أخرى</button></div></div>'
+ +(d.cat==='other'?'<div class="fld"><label for="eOther">نوع المصروف</label><input class="in" id="eOther" data-d="other" value="'+esc(d.other)+'" placeholder="عطل سيارة، بنشر كفر، شراء للعمل..." autocomplete="off"><span class="hint">مثل: عطل سيارة، بنشر كفر، شراء أي شي يخص العمل</span></div>':'')
+ +'<div class="row2"><div class="fld"><label for="eDate">التاريخ</label><input class="in" type="date" id="eDate" data-d="date" value="'+esc(d.date)+'"></div><div class="fld"><span class="l">اليوم</span><div class="dayview" id="dayv">'+(dayName(d.date)||'—')+'</div></div></div>'
+ +'<div class="fld"><label for="eDesc">الوصف (اختياري)</label><input class="in" id="eDesc" data-d="desc" value="'+esc(d.desc)+'" placeholder="مثال: غداء مع العميل" autocomplete="off"></div>'
+ +'<div class="infobox">'+ic('cam',22)+'<span>صور الفاتورة تنضاف من بطاقة المصروف بعد الحفظ.</span></div></form></div>'
+ +'<div class="pad" style="padding-top:20px;display:flex;flex-direction:column;gap:12px"><button class="btn grad" data-act="saveExp">'+ic('check',22,2.6)+'<span>حفظ المصروف</span></button>'+(d.id?'<button class="btn danger" data-act="delExp">'+ic('trash',19)+'<span>حذف المصروف</span></button>':'')+'</div>'}
+
+function vPhoto(){const t=cur();const e=t&&t.expenses.find(x=>x.id===S.eid);
+ return '<div class="dark"><div class="pad top"><button class="iconbtn" data-act="back" aria-label="رجوع">'+ic('back',22,2.4)+'</button><div class="ttl"><h1 style="font-size:20px">إضافة صورة</h1><span>'+(e?esc((e.desc||e.other||CATS[e.cat].l)+'، '+fmtMoney(e.amount)+' ريال'):'')+'</span></div></div>'
+ +'<div class="pad"><div class="mode"><button data-act="pickCam" class="first">'+ic('cam',19,2.2)+'<span>الكاميرا</span></button><button data-act="pickGal">'+ic('gal',19,2.2)+'<span>المعرض</span></button></div></div>'
+ +'<div class="pad" style="flex:1;display:flex;flex-direction:column"><div class="finder"><i class="corner c1"></i><i class="corner c2"></i><i class="corner c3"></i><i class="corner c4"></i>'
+ +(pending?'<img alt="معاينة الفاتورة" src="'+pending+'">':'<div class="ph">'+ic('cam',44,1.6)+'<span>صوّر الفاتورة أو اختارها من المعرض</span></div>')+'</div>'
+ +'<p style="text-align:center;font-size:13.5px;color:#C9D6EE;padding-top:12px">'+(pending?'تأكد إن النص واضح قبل اعتماد الصورة':'كل مصروف يقبل أكثر من صورة')+'</p></div>'
+ +'<div class="pad dbtns"><button class="btn a" data-act="retake">'+ic('retry',20,2.2)+'<span>'+(pending?'إعادة التصوير':'التقاط صورة')+'</span></button>'+(pending?'<button class="btn b" data-act="approve">'+ic('check',20,2.6)+'<span>اعتماد الصورة</span></button>':'')+'</div></div>'}
+
+function vViewer(){const t=cur();const e=t&&t.expenses.find(x=>x.id===S.eid);
+ const n=viewerImgs.length;
+ return '<div class="dark"><div class="pad top" style="justify-content:space-between"><button class="iconbtn" data-act="back" aria-label="إغلاق">'+ic('close',22,2.6)+'</button><div class="pill" id="vcount">'+(n?'١ من '+ar(n):'')+'</div><button class="iconbtn" data-act="delPhoto" aria-label="حذف الصورة">'+ic('trash',20)+'</button></div>'
+ +'<div class="slides" id="slides">'+viewerImgs.map((u,i)=>'<div class="slide"><img src="'+u+'" alt="صورة فاتورة '+ar(i+1)+'"></div>').join('')+'</div>'
+ +'<div class="dots" id="dots">'+viewerImgs.map((u,i)=>'<i class="'+(i===0?'on':'')+'"></i>').join('')+'</div>'
+ +'<div class="infobar"><span class="ico" style="background:rgba(255,255,255,.14);color:#fff;width:44px;height:44px;border-radius:14px">'+ic(e?CATS[e.cat].i:'bed',22)+'</span><span class="grow"><b style="font-size:16px;font-weight:800;display:block">'+(e?esc(e.desc||e.other||CATS[e.cat].l):'')+'</b><small style="font-size:12.5px;color:#C9D6EE">اسحب يمين أو يسار للتنقل بين الصور</small></span><b style="font-size:19px;font-weight:800">'+(e?fmtMoney(e.amount):'')+' <span style="font-size:12px;opacity:.8">ريال</span></b></div></div>'}
+
+function vActions(){const t=cur();const np=t.expenses.reduce((s,e)=>s+e.photos.length,0);
+ return hdr(t.name,fmtRange(t.start,t.end),{tall:true})
+ +'<div class="pad float"><div class="stat"><div><div class="lbl">إجمالي المصاريف</div><div><span class="num">'+fmtMoney(tripTotal(t))+'</span> <span class="cur">ريال</span></div></div><div style="display:flex;gap:8px"><div class="chip"><b style="font-size:20px">'+ar(t.expenses.length)+'</b><span>مصاريف</span></div><div class="chip"><b style="font-size:20px">'+ar(np)+'</b><span>صور</span></div></div></div></div>'
+ +'<div class="pad sec"><h2>وش تبغى تسوي بالرحلة؟</h2>'
+ +'<button class="opt main" data-act="doSave"><span class="ico">'+ic('save',26)+'</span><span class="grow"><b>حفظ</b><small>الرحلة محفوظة تلقائياً، هذا يرجعك لقائمة رحلاتي</small></span>'+ic('chev',20,2.4)+'</button>'
+ +'<button class="opt" data-act="doPdf"><span class="ico">'+ic('down',26)+'</span><span class="grow"><b style="color:var(--accent)">تحميل PDF</b><small>ملف فيه كل تفاصيل الرحلة وصور الفواتير</small></span><span class="chev">'+ic('chev',20,2.4)+'</span></button>'
+ +'<button class="opt" data-act="doSend"><span class="ico">'+ic('send',26)+'</span><span class="grow"><b style="color:var(--accent)">إرسال</b><small>انسخ الملخص أو أرسل ملف PDF بواتساب أو بريد</small></span><span class="chev">'+ic('chev',20,2.4)+'</span></button>'
+ +(S.done?'<div class="okbox">'+ic('ok',22,2.4)+'<span>'+esc(S.done)+'</span></div>':'')
+ +'<button class="btn soft" style="min-height:56px;border-radius:18px;font-size:17px" data-act="home">الرجوع لرحلاتي</button></div>'}
+
+const VIEWS={main:vMain,newTrip:vNewTrip,trip:vTrip,exp:vExp,photo:vPhoto,viewer:vViewer,actions:vActions};
+function render(){const v=document.getElementById('view');v.innerHTML=VIEWS[S.screen]();
+ if(S.screen==='viewer'){const sl=document.getElementById('slides');if(sl){sl.addEventListener('scroll',()=>{const i=Math.round(Math.abs(sl.scrollLeft)/Math.max(1,sl.clientWidth));const c=document.getElementById('vcount');if(c)c.textContent=ar(i+1)+' من '+ar(viewerImgs.length);document.querySelectorAll('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i))},{passive:true})}}}
+
+/* ---------- photos ---------- */
+function compress(file,max,q){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight;const s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q))};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('img'))};img.src=url})}
+async function onFile(ev){const f=ev.target.files&&ev.target.files[0];ev.target.value='';if(!f)return;try{pending=await compress(f,1400,.82);render()}catch(e){toast('ما قدرت أقرأ الصورة، جرّب صورة ثانية')}}
+document.getElementById('fCam').addEventListener('change',onFile);document.getElementById('fGal').addEventListener('change',onFile);
+
+/* ---------- report (PDF) ---------- */
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+function tx(c,s,x,y,o){o=o||{};c.font=(o.w||500)+' '+(o.s||30)+'px Tajawal, system-ui, sans-serif';c.fillStyle=o.c||'#0E2347';c.textAlign=o.a||'right';let t=String(s);if(o.max){while(t.length>1&&c.measureText(t).width>o.max)t=t.slice(0,-1);if(t!==String(s))t=t.trim()+'…'}c.fillText(t,x,y)}
+function loadImg(u){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=u})}
+async function renderReport(t){
+ try{await document.fonts.load('800 40px Tajawal');await document.fonts.load('500 30px Tajawal');await document.fonts.load('700 30px Tajawal')}catch(e){}
+ const W=1240,H=1754,M=84,pages=[];let cv,c,y;
+ const np=()=>{cv=document.createElement('canvas');cv.width=W;cv.height=H;c=cv.getContext('2d');c.fillStyle='#fff';c.fillRect(0,0,W,H);c.direction='rtl';c.textBaseline='middle';pages.push(cv);y=110};
+ const exps=t.expenses.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+ np();
+ const g=c.createLinearGradient(0,0,W,300);g.addColorStop(0,'#2F6FF5');g.addColorStop(1,'#1646C0');c.fillStyle=g;c.fillRect(0,0,W,300);
+ tx(c,t.name,W-M,118,{s:76,w:800,c:'#fff',max:W-2*M});tx(c,fmtRange(t.start,t.end),W-M,214,{s:36,c:'#DCE8FF'});
+ c.fillStyle='#EAF1FF';rr(c,M,340,W-2*M,150,28);c.fill();
+ tx(c,'إجمالي المصاريف',W-M-40,415,{s:34,w:700,c:'#33466A'});tx(c,fmtMoney(tripTotal(t))+' ريال',M+40,415,{s:64,w:800,c:'#1646C0',a:'left'});
+ y=570;
+ const cols={d:W-M-20,c:W-M-330,t:W-M-520,a:M+24};
+ const head=()=>{c.fillStyle='#1646C0';rr(c,M,y-40,W-2*M,80,18);c.fill();tx(c,'التاريخ',cols.d,y,{s:28,w:700,c:'#fff'});tx(c,'التصنيف',cols.c,y,{s:28,w:700,c:'#fff'});tx(c,'الوصف',cols.t,y,{s:28,w:700,c:'#fff'});tx(c,'المبلغ',cols.a,y,{s:28,w:700,c:'#fff',a:'left'});y+=88};
+ head();
+ if(!exps.length){tx(c,'لا توجد مصاريف مسجلة',W/2,y+20,{s:30,c:'#62728C',a:'center'});y+=80}
+ exps.forEach((e,i)=>{if(y+44>H-150){np();y=130;head()}
+  if(i%2===0){c.fillStyle='#F3F6FC';rr(c,M,y-40,W-2*M,80,14);c.fill()}
+  const cat=CATS[e.cat]||CATS.other;
+  tx(c,dayName(e.date)+' '+ar(pISO(e.date).d)+' '+MONTHS[pISO(e.date).m-1],cols.d,y,{s:27,w:700,max:300});
+  tx(c,cat.l,cols.c,y,{s:27,c:'#1646C0',w:700,max:170});
+  tx(c,(e.desc&&e.other&&e.desc.indexOf(e.other)<0?e.other+' — '+e.desc:(e.desc||e.other))||'—',cols.t,y,{s:27,c:'#33466A',max:cols.t-(cols.a+190)});
+  tx(c,fmtMoney(e.amount),cols.a,y,{s:30,w:800,c:'#1646C0',a:'left'});y+=84});
+ y+=10;c.fillStyle='#EAF1FF';rr(c,M,y-40,W-2*M,80,18);c.fill();tx(c,'الإجمالي',W-M-24,y,{s:30,w:800,c:'#1646C0'});tx(c,fmtMoney(tripTotal(t))+' ريال',M+24,y,{s:34,w:800,c:'#1646C0',a:'left'});y+=110;
+ const om=otMinutes(t),ce=carEnd(t);
+ const block=(title,rows)=>{const h=90+rows.length*76;if(y+h>H-130){np();y=130}
+  tx(c,title,W-M,y,{s:38,w:800,c:'#1646C0'});y+=36;c.fillStyle='#1646C0';c.fillRect(W-M-120,y-6,120,6);y+=50;
+  rows.forEach(r=>{tx(c,r[0],W-M,y,{s:30,c:'#62728C',w:700});tx(c,r[1],W-M-420,y,{s:32,w:800});y+=76});y+=20};
+ block('العمل الإضافي',[['وقت البداية',fmtTime(t.ot.s)],['وقت النهاية',fmtTime(t.ot.e)],['عدد الساعات',om==null?'—':fmtDur(om)]]);
+ block('العودة',[['تاريخ العودة',t.ret?dayName(t.ret)+' '+fmtDate(t.ret):'—']]);
+ block('وقت تشغيل السيارة',[['وقت التشغيل',fmtTime(t.car)],['وقت نهاية الدوام',ce==null?'—':fmtTime(ce)]]);
+ const items=[];for(const e of exps){for(const pid of e.photos){const p=await DB.get('photos',pid);if(p)items.push({e,u:p.data})}}
+ let k=0;for(const it of items){k++;np();const gg=c.createLinearGradient(0,0,W,170);gg.addColorStop(0,'#2F6FF5');gg.addColorStop(1,'#1646C0');c.fillStyle=gg;c.fillRect(0,0,W,170);
+  tx(c,it.e.desc||it.e.other||CATS[it.e.cat].l,W-M,70,{s:46,w:800,c:'#fff',max:W-2*M});tx(c,fmtDate(it.e.date)+' · '+fmtMoney(it.e.amount)+' ريال',W-M,125,{s:30,c:'#DCE8FF'});
+  const im=await loadImg(it.u);if(im){const bx=M,by=210,bw=W-2*M,bh=H-210-150;const s=Math.min(bw/im.naturalWidth,bh/im.naturalHeight);const w=im.naturalWidth*s,h=im.naturalHeight*s;c.fillStyle='#F3F6FC';rr(c,bx,by,bw,bh,20);c.fill();c.drawImage(im,bx+(bw-w)/2,by+(bh-h)/2,w,h)}
+  tx(c,'صورة '+ar(k)+' من '+ar(items.length),W/2,H-95,{s:28,c:'#62728C',a:'center'})}
+ pages.forEach((p,i)=>{const x=p.getContext('2d');x.direction='rtl';x.textBaseline='middle';tx(x,t.name+' — صفحة '+ar(i+1)+' من '+ar(pages.length),W/2,H-48,{s:24,c:'#9AA9C2',a:'center'})});
+ return pages}
+async function buildPDF(pages){
+ const enc=new TextEncoder();const chunks=[];let off=0;const offs={};
+ const push=x=>{const b=typeof x==='string'?enc.encode(x):x;chunks.push(b);off+=b.length};
+ const beg=n=>{offs[n]=off;push(n+' 0 obj\n')};
+ push('%PDF-1.4\n');
+ const n=pages.length;beg(1);push('<< /Type /Catalog /Pages 2 0 R >>\nendobj\n');
+ beg(2);push('<< /Type /Pages /Count '+n+' /Kids ['+pages.map((p,i)=>(3+3*i)+' 0 R').join(' ')+'] >>\nendobj\n');
+ for(let i=0;i<n;i++){const pg=3+3*i,ct=4+3*i,im=5+3*i;
+  const blob=await new Promise(r=>pages[i].toBlob(r,'image/jpeg',.86));const bytes=new Uint8Array(await blob.arrayBuffer());
+  beg(pg);push('<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595.28 841.89] /Resources << /XObject << /Im0 '+im+' 0 R >> >> /Contents '+ct+' 0 R >>\nendobj\n');
+  const cs='q 595.28 0 0 841.89 0 0 cm /Im0 Do Q';beg(ct);push('<< /Length '+cs.length+' >>\nstream\n'+cs+'\nendstream\nendobj\n');
+  beg(im);push('<< /Type /XObject /Subtype /Image /Width '+pages[i].width+' /Height '+pages[i].height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+bytes.length+' >>\nstream\n');push(bytes);push('\nendstream\nendobj\n')}
+ const total=3+3*n;const xr=off;let x='xref\n0 '+total+'\n0000000000 65535 f \n';
+ for(let i=1;i<total;i++)x+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+ push(x+'trailer\n<< /Size '+total+' /Root 1 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+ return new Blob(chunks,{type:'application/pdf'})}
+async function exportPDF(t){
+ toast('جاري تجهيز ملف PDF...');
+ try{
+  const pages=await renderReport(t);const blob=await buildPDF(pages);
+  const safeName=(t.name||'رحلة').replace(/[\\/:*?"<>|]/g,'-');
+  const file=new File([blob],safeName+'.pdf',{type:'application/pdf'});
+  if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+   await navigator.share({files:[file],title:'تقرير '+(t.name||'الرحلة'),text:'تقرير مصاريف رحلة العمل'});
+   S.done='تم فتح قائمة المشاركة';return true;
+  }
+  const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=safeName+'.pdf';a.rel='noopener';document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),60000);
+  S.done='تم تجهيز ملف PDF. إذا لم يبدأ التنزيل، افتح الملف وشاركه من قائمة المشاركة';toast('تم تجهيز ملف PDF');return true;
+ }catch(e){if(e&&e.name==='AbortError'){toast('تم إلغاء المشاركة');return false}console.error(e);toast('تعذر إنشاء التقرير. حاول مرة أخرى');return false}
+}
+function summary(t){const L=[];L.push(t.name);L.push('من '+fmtRange(t.start,t.end));L.push('الإجمالي: '+fmtMoney(tripTotal(t))+' ريال');L.push('');L.push('المصاريف:');
+ t.expenses.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).forEach(e=>{const c=CATS[e.cat];L.push('- '+(e.desc||e.other||c.l)+' ('+(e.cat==='other'&&e.other?'أخرى: '+e.other:c.l)+'): '+fmtMoney(e.amount)+' ريال، '+dayName(e.date)+' '+fmtDate(e.date)+(e.photos.length?'، '+ar(e.photos.length)+' صورة':''))});
+ const om=otMinutes(t),ce=carEnd(t);L.push('');
+ L.push('العمل الإضافي: '+(om==null?'—':'من '+fmtTime(t.ot.s)+' إلى '+fmtTime(t.ot.e)+' ('+fmtDur(om)+')'));
+ L.push('تاريخ العودة: '+(t.ret?dayName(t.ret)+' '+fmtDate(t.ret):'—'));
+ L.push('وقت تشغيل السيارة: '+fmtTime(t.car)+'، نهاية الدوام: '+(ce==null?'—':fmtTime(ce)));return L.join('\n')}
+
+/* ---------- events ---------- */
+const root=document.getElementById('view');
+function setPath(t,k,v){if(k==='ot.s')t.ot.s=v;else if(k==='ot.e')t.ot.e=v;else t[k]=v}
+document.addEventListener('input',e=>{const el=e.target;if(el.dataset&&el.dataset.d&&draft){draft[el.dataset.d]=el.value;if(el.dataset.d==='date'){const d=document.getElementById('dayv');if(d)d.textContent=dayName(el.value)||'—'}}});
+document.addEventListener('change',e=>{const el=e.target;if(el.dataset&&el.dataset.bind&&S.screen==='trip'){const t=cur();setPath(t,el.dataset.bind,el.value);saveTrip(t);render()}});
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b)return;const a=b.dataset.act,id=b.dataset.id;const t=cur();
+ switch(a){
+ case 'back':back();break;
+ case 'home':stack=[];S={screen:'main'};render();window.scrollTo(0,0);break;
+ case 'newTrip':draft={name:'',start:todayISO(),end:todayISO()};go('newTrip',{tid:null});break;
+ case 'openTrip':stack=[{screen:'main'}];S={screen:'trip',tid:id};render();window.scrollTo(0,0);break;
+ case 'editTrip':draft={name:t.name,start:t.start,end:t.end};go('newTrip',{tid:t.id});break;
+ case 'saveTrip':{const d=draft;const name=(d.name||'').trim();if(!name){toast('اكتب اسم الرحلة');break}
+  if(d.start&&d.end&&d.end<d.start){toast('تاريخ النهاية قبل تاريخ البداية');break}
+  if(S.tid){const x=cur();x.name=name;x.start=d.start;x.end=d.end;await saveTrip(x);back()}
+  else{const x={id:uid(),name,start:d.start,end:d.end,ot:{s:'',e:''},ret:d.end,car:'',expenses:[]};TRIPS.push(x);sortTrips();await saveTrip(x);stack=[{screen:'main'}];S={screen:'trip',tid:x.id};render();window.scrollTo(0,0);toast('تم إنشاء الرحلة')}break}
+ case 'delTrip':confirmBox('تحذف رحلة "'+t.name+'" مع كل مصاريفها وصورها؟','حذف الرحلة',async()=>{for(const ex of t.expenses)for(const p of ex.photos)await DB.del('photos',p);await DB.del('trips',t.id);TRIPS=TRIPS.filter(x=>x.id!==t.id);stack=[];S={screen:'main'};render();toast('تم حذف الرحلة')});break;
+ case 'newExp':draft={id:null,amount:'',cat:'stay',other:'',date:(todayISO()>=t.start&&todayISO()<=t.end)?todayISO():(t.start||todayISO()),desc:''};go('exp',{tid:t.id});break;
+ case 'editExp':{const x=t.expenses.find(q=>q.id===id);draft={id:x.id,amount:String(x.amount),cat:x.cat,other:x.other||'',date:x.date,desc:x.desc||''};go('exp',{tid:t.id});break}
+ case 'cat':draft.cat=id;render();break;
+ case 'saveExp':{const amt=toNum(draft.amount);if(!(amt>0)){toast('اكتب المبلغ بالريال');break}
+  if(!draft.date){toast('اختر التاريخ');break}
+  if(draft.cat==='other'&&!draft.other.trim()&&!draft.desc.trim()){toast('اكتب نوع المصروف أو وصفه');break}
+  const rec={amount:amt,cat:draft.cat,other:draft.cat==='other'?draft.other.trim():'',date:draft.date,desc:draft.desc.trim()};
+  if(draft.id){Object.assign(t.expenses.find(q=>q.id===draft.id),rec)}else{t.expenses.push(Object.assign({id:uid(),photos:[]},rec))}
+  await saveTrip(t);back();toast('تم حفظ المصروف');break}
+ case 'delExp':confirmBox('تحذف هذا المصروف وصوره؟','حذف المصروف',async()=>{const x=t.expenses.find(q=>q.id===draft.id);for(const p of x.photos)await DB.del('photos',p);t.expenses=t.expenses.filter(q=>q.id!==draft.id);await saveTrip(t);back();toast('تم حذف المصروف')});break;
+ case 'addPhoto':pending=null;go('photo',{tid:t.id,eid:id});break;
+ case 'pickCam':case 'retake':pending=null;document.getElementById('fCam').click();break;
+ case 'pickGal':pending=null;document.getElementById('fGal').click();break;
+ case 'approve':{const x=t.expenses.find(q=>q.id===S.eid);const pid=uid();await DB.put('photos',{id:pid,data:pending});x.photos.push(pid);await saveTrip(t);pending=null;back();toast('تم حفظ الصورة');break}
+ case 'viewPhotos':{const x=t.expenses.find(q=>q.id===id);if(!x.photos.length){toast('ما فيه صور لهذا المصروف بعد');break}
+  viewerImgs=[];for(const p of x.photos){const r=await DB.get('photos',p);if(r)viewerImgs.push(r.data)}go('viewer',{tid:t.id,eid:id});break}
+ case 'delPhoto':{const sl=document.getElementById('slides');const i=Math.round(Math.abs(sl.scrollLeft)/Math.max(1,sl.clientWidth));
+  confirmBox('تحذف هذه الصورة؟','حذف الصورة',async()=>{const x=t.expenses.find(q=>q.id===S.eid);const pid=x.photos[i];await DB.del('photos',pid);x.photos.splice(i,1);await saveTrip(t);viewerImgs.splice(i,1);if(!viewerImgs.length){back()}else{render()}toast('تم حذف الصورة')});break}
+ case 'toActions':S.done='';go('actions',{tid:t.id,done:''});break;
+ case 'doSave':toast('تم حفظ الرحلة');stack=[];S={screen:'main'};render();window.scrollTo(0,0);break;
+ case 'doPdf':{const ok=await exportPDF(t);S.done=ok?'تم تجهيز ملف PDF بنجاح':'';render();break}
+ case 'doSend':{modal('<div class="sheet" role="dialog" aria-modal="true"><h2>إرسال الرحلة</h2><textarea id="sumTxt" readonly aria-label="ملخص الرحلة">'+esc(summary(t))+'</textarea><div class="btns"><button class="btn pri" data-act="copySum">'+ic('copy',19)+'<span>نسخ الملخص</span></button><button class="btn soft" data-act="sendPdf">'+ic('down',19)+'<span>حفظ PDF للإرسال</span></button></div><p class="hint">انسخ الملخص والصقه في واتساب أو البريد. أو احفظ ملف PDF وأرسله من قائمة المشاركة في جوالك.</p><button class="btn soft" data-act="mNo">إغلاق</button></div>');break}
+ case 'copySum':{const ta=document.getElementById('sumTxt');let ok=false;try{await navigator.clipboard.writeText(ta.value);ok=true}catch(err){}
+  if(!ok){try{ta.focus();ta.select();ok=document.execCommand('copy')}catch(err){}}toast(ok?'تم نسخ الملخص':'حدّد النص يدوياً وانسخه');break}
+ case 'sendPdf':closeModal();{const ok=await exportPDF(t);S.done=ok?'تم تجهيز ملف PDF، أرسله من قائمة المشاركة':'';render()}break;
+ case 'mOk':{const f=confirmBox.fn;closeModal();if(f)f();break}
+ case 'mNo':closeModal();break}
+});
+document.getElementById('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeModal()});
+
+/* ---------- boot ---------- */
+(async function(){
+ await DB.open();TRIPS=await DB.all('trips');
+ TRIPS=TRIPS.filter(t=>{if(t.sample){DB.del('trips',t.id);return false}return true});
+ sortTrips();render();
+})();
+})();
+</script>
+
+<script>
+if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+ window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(err=>console.warn('Offline setup unavailable',err)));
+}
+</script>
+</body></html>
