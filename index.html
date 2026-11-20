@@ -1,4 +1,6 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><meta name="theme-color" content="#10243f">
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.fld{min-width:0}.datewrap{position:relative;min-width:0;width:100%}.datewrap .in{display:block;box-sizing:border-box;min-width:0;max-width:100%;width:100%;padding:0 5px 0 27px;font-size:clamp(12px,3.6vw,16px);-webkit-appearance:none;appearance:none;text-align:center}.datewrap .in::-webkit-date-and-time-value{text-align:center;min-height:1.2em}.datewrap .in::-webkit-calendar-picker-indicator{opacity:0;position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0}.datewrap>svg{position:absolute;left:7px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--accent)}.empty button.ico{cursor:pointer}.receipt-preview{width:100%;max-height:220px;object-fit:contain;border-radius:12px;background:var(--field)}
+</style><meta name="theme-color" content="#10243f">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="مصاريفي">
@@ -294,7 +296,7 @@ function vMain(){
 function vNewTrip(){const t=S.tid?cur():null;const d=draft;
  return hdr(t?'تعديل الرحلة':'رحلة جديدة',t?'':'سجّل بيانات الرحلة وابدأ بإضافة المصاريف',{tall:true})
  +'<div class="pad float"><form class="form" id="tripForm" novalidate><div class="fld"><label for="tName">اسم الرحلة</label><input class="in" id="tName" data-d="name" value="'+esc(d.name)+'" placeholder="مثال: رحلة الدمام" autocomplete="off" style="border-color:var(--accent)"></div>'
- +'<div class="row2"><div class="fld"><label for="tStart">تاريخ البداية</label><input class="in" type="date" id="tStart" data-d="start" value="'+esc(d.start)+'"></div><div class="fld"><label for="tEnd">تاريخ النهاية</label><input class="in" type="date" id="tEnd" data-d="end" value="'+esc(d.end)+'"></div></div>'
+ +'<div class="row2"><div class="fld"><label for="tStart">تاريخ البداية</label><div class="datewrap"><input class="in" type="date" id="tStart" data-d="start" value="'+esc(d.start)+'">'+ic('cal',17)+'</div></div><div class="fld"><label for="tEnd">تاريخ النهاية</label><div class="datewrap"><input class="in" type="date" id="tEnd" data-d="end" value="'+esc(d.end)+'">'+ic('cal',17)+'</div></div></div>'
  +'<div class="infobox">'+ic('info',22)+'<span>بعد البدء تقدر تضيف المصاريف وصور الفواتير والعمل الإضافي ووقت تشغيل السيارة.</span></div></form></div>'
  +'<div class="pad" style="padding-top:22px"><button class="btn grad" data-act="saveTrip">'+(t?'حفظ التعديل':'بدء الرحلة')+ic('chev',20,2.6)+'</button></div>'}
 
@@ -304,7 +306,7 @@ function vTrip(){const t=cur();if(!t)return '';
   const n=e.photos.length;
   return '<div class="card"><button class="exp-top" data-act="editExp" data-id="'+e.id+'" aria-label="تعديل المصروف"><span class="ico sm'+(e.cat==='other'?' neutral':'')+'">'+ic(c.i,24)+'</span><span class="grow"><span class="name" style="font-size:17px;display:block">'+esc(title)+'</span><span class="tag'+(e.cat==='other'?' n':'')+'">'+esc(tag)+'</span></span><span class="money"><b style="font-size:24px">'+fmtMoney(e.amount)+'</b><span>ريال</span></span></button><div class="sep"></div>'
   +'<div class="btns"><button class="btn pri" data-act="addPhoto" data-id="'+e.id+'">'+ic('cam',19)+'<span>إضافة صورة</span></button><button class="btn soft'+(n?'':' off')+'" data-act="viewPhotos" data-id="'+e.id+'">'+ic('gal',19)+'<span>استعراض الصور ('+ar(n)+')</span></button></div></div>'}).join('')
-  :'<div class="card empty"><span class="ico">'+ic('plus',26)+'</span><p>ما فيه مصاريف بعد. اضغط "إضافة مصروف" وسجّل أول مصروف.</p></div>';
+  :'<div class="card empty"><button type="button" class="ico" data-act="newExp" aria-label="إضافة مصروف">'+ic('plus',26)+'</button><p>ما فيه مصاريف بعد. اضغط "إضافة مصروف" وسجّل أول مصروف.</p></div>';
  const om=otMinutes(t),ce=carEnd(t);
  return '<div class="hdr"><div class="pad"><div class="hrow"><button class="iconbtn" data-act="back" aria-label="رجوع">'+ic('back',22,2.4)+'</button><div class="grow ttl"><h1>'+esc(t.name)+(t.sample?'<span class="badge">مثال</span>':'')+'</h1></div><button class="iconbtn" data-act="editTrip" aria-label="تعديل الرحلة">'+ic('edit',20)+'</button><button class="iconbtn" data-act="delTrip" aria-label="حذف الرحلة">'+ic('trash',20)+'</button></div>'
  +'<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px"><div class="pill" style="gap:8px;font-size:14px">'+ic('cal',17)+'<span>من '+fmtRange(t.start,t.end)+'</span></div><div class="pill" style="background:#fff;color:#1646C0;gap:8px;font-size:14px">الإجمالي <span style="font-size:16px">'+fmtMoney(tripTotal(t))+' ريال</span></div></div></div></div>'
@@ -320,9 +322,9 @@ function vExp(){const d=draft;const sel=k=>'aria-pressed="'+(d.cat===k)+'"';
  +'<div class="pad" style="margin-top:16px"><form class="form" id="expForm" novalidate><div class="fld"><label for="eAmt">المبلغ</label><div class="amtwrap"><input class="in big" id="eAmt" data-d="amount" inputmode="decimal" value="'+esc(d.amount)+'" placeholder="٠" autocomplete="off"><span>ريال</span></div></div>'
  +'<div class="fld"><span class="l">التصنيف</span><div class="seg" role="group" aria-label="التصنيف"><button type="button" data-act="cat" data-id="stay" '+sel('stay')+'>'+ic('bed',18)+'سكن</button><button type="button" data-act="cat" data-id="food" '+sel('food')+'>'+ic('food',18)+'تغذية</button><button type="button" data-act="cat" data-id="other" '+sel('other')+'>'+ic('wrench',18)+'أخرى</button></div></div>'
  +(d.cat==='other'?'<div class="fld"><label for="eOther">نوع المصروف</label><input class="in" id="eOther" data-d="other" value="'+esc(d.other)+'" placeholder="عطل سيارة، بنشر كفر، شراء للعمل..." autocomplete="off"><span class="hint">مثل: عطل سيارة، بنشر كفر، شراء أي شي يخص العمل</span></div>':'')
- +'<div class="row2"><div class="fld"><label for="eDate">التاريخ</label><input class="in" type="date" id="eDate" data-d="date" value="'+esc(d.date)+'"></div><div class="fld"><span class="l">اليوم</span><div class="dayview" id="dayv">'+(dayName(d.date)||'—')+'</div></div></div>'
+ +'<div class="row2"><div class="fld"><label for="eDate">التاريخ</label><div class="datewrap"><input class="in" type="date" id="eDate" data-d="date" value="'+esc(d.date)+'">'+ic('cal',17)+'</div></div><div class="fld"><span class="l">اليوم</span><div class="dayview" id="dayv">'+(dayName(d.date)||'—')+'</div></div></div>'
  +'<div class="fld"><label for="eDesc">الوصف (اختياري)</label><input class="in" id="eDesc" data-d="desc" value="'+esc(d.desc)+'" placeholder="مثال: غداء مع العميل" autocomplete="off"></div>'
- +'<div class="infobox">'+ic('cam',22)+'<span>صور الفاتورة تنضاف من بطاقة المصروف بعد الحفظ.</span></div></form></div>'
+ +(d.id?'<div class="infobox">'+ic('cam',22)+'<span>صور الفاتورة تنضاف من بطاقة المصروف بعد الحفظ.</span></div>':'<div class="fld"><span class="l">صورة الفاتورة (اختياري)</span>'+(d.receipt?'<img class="receipt-preview" src="'+d.receipt+'" alt="صورة الفاتورة">':'')+'<button type="button" class="btn soft" data-act="pickCam">'+ic('cam',19)+(d.receipt?'إعادة التصوير':'تصوير الفاتورة')+'</button><button type="button" class="btn soft" data-act="pickGal">'+ic('gal',19)+'اختيار من المعرض</button></div>')+'</form></div>'
  +'<div class="pad" style="padding-top:20px;display:flex;flex-direction:column;gap:12px"><button class="btn grad" data-act="saveExp">'+ic('check',22,2.6)+'<span>حفظ المصروف</span></button>'+(d.id?'<button class="btn danger" data-act="delExp">'+ic('trash',19)+'<span>حذف المصروف</span></button>':'')+'</div>'}
 
 function vPhoto(){const t=cur();const e=t&&t.expenses.find(x=>x.id===S.eid);
@@ -356,7 +358,7 @@ function render(){const v=document.getElementById('view');v.innerHTML=VIEWS[S.sc
 
 /* ---------- photos ---------- */
 function compress(file,max,q){return new Promise((res,rej)=>{const url=URL.createObjectURL(file);const img=new Image();img.onload=()=>{let w=img.naturalWidth,h=img.naturalHeight;const s=Math.min(1,max/Math.max(w,h));w=Math.round(w*s);h=Math.round(h*s);const c=document.createElement('canvas');c.width=w;c.height=h;const x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,w,h);x.drawImage(img,0,0,w,h);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q))};img.onerror=()=>{URL.revokeObjectURL(url);rej(new Error('img'))};img.src=url})}
-async function onFile(ev){const f=ev.target.files&&ev.target.files[0];ev.target.value='';if(!f)return;try{pending=await compress(f,1400,.82);render()}catch(e){toast('ما قدرت أقرأ الصورة، جرّب صورة ثانية')}}
+async function onFile(ev){const f=ev.target.files&&ev.target.files[0];ev.target.value='';if(!f)return;try{const target=S.screen==='exp'?draft:null;const data=await compress(f,1400,.82);if(target){if(S.screen!=='exp'||draft!==target)return;target.receipt=data}else if(S.screen==='photo'){pending=data}else{return}render()}catch(e){toast('ما قدرت أقرأ الصورة، جرّب صورة ثانية')}}
 document.getElementById('fCam').addEventListener('change',onFile);document.getElementById('fGal').addEventListener('change',onFile);
 
 /* ---------- report (PDF) ---------- */
@@ -455,14 +457,14 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
   if(S.tid){const x=cur();x.name=name;x.start=d.start;x.end=d.end;await saveTrip(x);back()}
   else{const x={id:uid(),name,start:d.start,end:d.end,ot:{s:'',e:''},ret:d.end,car:'',expenses:[]};TRIPS.push(x);sortTrips();await saveTrip(x);stack=[{screen:'main'}];S={screen:'trip',tid:x.id};render();window.scrollTo(0,0);toast('تم إنشاء الرحلة')}break}
  case 'delTrip':confirmBox('تحذف رحلة "'+t.name+'" مع كل مصاريفها وصورها؟','حذف الرحلة',async()=>{for(const ex of t.expenses)for(const p of ex.photos)await DB.del('photos',p);await DB.del('trips',t.id);TRIPS=TRIPS.filter(x=>x.id!==t.id);stack=[];S={screen:'main'};render();toast('تم حذف الرحلة')});break;
- case 'newExp':draft={id:null,amount:'',cat:'stay',other:'',date:(todayISO()>=t.start&&todayISO()<=t.end)?todayISO():(t.start||todayISO()),desc:''};go('exp',{tid:t.id});break;
+ case 'newExp':draft={id:null,amount:'',cat:'stay',other:'',date:(todayISO()>=t.start&&todayISO()<=t.end)?todayISO():(t.start||todayISO()),desc:'',receipt:null};go('exp',{tid:t.id});document.getElementById('fCam').click();break;
  case 'editExp':{const x=t.expenses.find(q=>q.id===id);draft={id:x.id,amount:String(x.amount),cat:x.cat,other:x.other||'',date:x.date,desc:x.desc||''};go('exp',{tid:t.id});break}
  case 'cat':draft.cat=id;render();break;
  case 'saveExp':{const amt=toNum(draft.amount);if(!(amt>0)){toast('اكتب المبلغ بالريال');break}
   if(!draft.date){toast('اختر التاريخ');break}
   if(draft.cat==='other'&&!draft.other.trim()&&!draft.desc.trim()){toast('اكتب نوع المصروف أو وصفه');break}
   const rec={amount:amt,cat:draft.cat,other:draft.cat==='other'?draft.other.trim():'',date:draft.date,desc:draft.desc.trim()};
-  if(draft.id){Object.assign(t.expenses.find(q=>q.id===draft.id),rec)}else{t.expenses.push(Object.assign({id:uid(),photos:[]},rec))}
+  if(draft.id){Object.assign(t.expenses.find(q=>q.id===draft.id),rec)}else{const photos=[];if(draft.receipt){const pid=uid();await DB.put('photos',{id:pid,data:draft.receipt});photos.push(pid)}t.expenses.push(Object.assign({id:uid(),photos},rec))}
   await saveTrip(t);back();toast('تم حفظ المصروف');break}
  case 'delExp':confirmBox('تحذف هذا المصروف وصوره؟','حذف المصروف',async()=>{const x=t.expenses.find(q=>q.id===draft.id);for(const p of x.photos)await DB.del('photos',p);t.expenses=t.expenses.filter(q=>q.id!==draft.id);await saveTrip(t);back();toast('تم حذف المصروف')});break;
  case 'addPhoto':pending=null;go('photo',{tid:t.id,eid:id});break;
